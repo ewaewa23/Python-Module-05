@@ -18,7 +18,7 @@ class DataProcessor(ABC):
 class NumericProcessor(DataProcessor):
 
     def process(self, data: Any) -> str:
-        print("Initializing Numeric Processor...\n")
+        print("Initializing Numeric Processor...")
         try:
             if not data:
                 raise ValueError("data is empty")
@@ -46,7 +46,7 @@ class NumericProcessor(DataProcessor):
 class TextProcessor(DataProcessor):
 
     def process(self, data: Any) -> str:
-        print("Initializing Text Processor...\n")
+        print("Initializing Text Processor...")
         try:
             if not data:
                 raise ValueError("data is empty")
@@ -64,26 +64,61 @@ class TextProcessor(DataProcessor):
             str(data)
             print("Validation: Text data verified")
         except TypeError:
-            print("ERROR: value have to be text")
+            print("ERROR: value has to be text")
             return False
         else:
             return True
 
 
 class LogProcessor(DataProcessor):
-    pass
+
+    def process(self, data: Any) -> str:
+        print("Initializing Log Processor...")
+        try:
+            if not data:
+                raise ValueError("data is empty")
+            processing_data = str(data)
+            print(f"Processing data: {processing_data}")
+            self.validate(processing_data)
+        except ValueError as e:
+            return f"ERROR: {e}"
+        else:
+            return (self.format_output(processing_data))
+
+    def validate(self, data: Any) -> bool:
+        try:
+            title_log: str = ""
+            i = 0
+            while i < 5:
+                title_log += data[i]
+                i += 1
+            if (title_log == "ERROR"):
+                print("Validation: Log entry verified")
+            else:
+                raise ValueError("value has to begin with ERROR")
+        except ValueError as e:
+            print(f"ERROR: {e}")
+            return False
+        else:
+            return True
+
+    def format_output(self, result: str) -> str:
+        return f"Output: [ALERT] {result}\n"
 
 
 def main():
-    print("=== CODE NEXUS - DATA PROCESSOR FOUNDATION ===")
+    print("=== CODE NEXUS - DATA PROCESSOR FOUNDATION ===\n")
     data_num = [1, 2, 3, 4, 5]
     data_str = ["Hello", "Nexus", "World"]
+    data_log = "ERROR: Connection timeout"
     processor_num = NumericProcessor()
     processor_str = TextProcessor()
-    processors_instances = [processor_num, processor_str]
-    data_list = [data_num, data_str]
+    processor_log = LogProcessor()
+    processors_instances = [processor_num, processor_str, processor_log]
+    data_list = [data_num, data_str, data_log]
     for processor, data in zip(processors_instances, data_list):
         print(processor.process(data))
+    print("=== Polymorphic Processing Demo ===")
 
 
 if __name__ == "__main__":
