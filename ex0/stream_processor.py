@@ -87,15 +87,19 @@ class LogProcessor(DataProcessor):
 
     def validate(self, data: Any) -> bool:
         try:
-            title_log: str = ""
             i = 0
-            while i < 5:
-                title_log += data[i]
+            has_synax = 0
+            while i < len(data):
+                if data[i] == "[":
+                    has_synax += 1
+                if data[i] == "]":
+                    has_synax += 1
+                    break
                 i += 1
-            if (title_log == "ERROR"):
+            if (has_synax == 2):
                 print("Validation: Log entry verified")
             else:
-                raise ValueError("value has to begin with ERROR")
+                raise ValueError("value has to begin with []")
         except ValueError as e:
             print(f"ERROR: {e}")
             return False
@@ -104,6 +108,10 @@ class LogProcessor(DataProcessor):
 
     def format_output(self, result: str) -> str:
         return f"Output: [ALERT] {result}\n"
+
+
+def process_all(processor, data):
+    return processor.process(data)
 
 
 def main():
@@ -119,6 +127,10 @@ def main():
     for processor, data in zip(processors_instances, data_list):
         print(processor.process(data))
     print("=== Polymorphic Processing Demo ===")
+    print(process_all(processor_num, [2, 2, 2]))
+    print(process_all(processor_str, "hello world"))
+    print(process_all(processor_log, "[INFO] INFO level detected:"
+                      "System ready"))
 
 
 if __name__ == "__main__":
