@@ -7,49 +7,80 @@ sensor_batch = {
         "sensor_batch": {"temp": 22.5, "humidity": 65, "pressure": 1013}},
     "TRANS_001": {
         "Type": "Financial Data",
-        "sensor_batch": [100, 150, 75]},
+        "sensor_batch": ["buy:100", "sell:150", "75"]},
     "EVENT_001": {
         "Type": "System Events",
         "sensor_batch": ["login", "error", "logout"]}
 }
-# trans: "buy:60,sell:"
+
 
 class DataStream(ABC):
 
-    # def __init__(self, stream_id) -> None:
-    #     self.stream_id = stream_id
+    def __init__(self, stream_id) -> None:
+        self.stream_id = stream_id
 
     @abstractmethod
     def process_batch(self, data_batch: List[Any]) -> str:
-        pass
+        raise NotImplementedError("method not implemented in his child class")
 
     def filter_data(self, data_batch: List[Any],
                     criteria: Optional[str] = None) -> List[Any]:
-        pass
+        raise NotImplementedError("method not implemented in his child class")
 
     def get_stats(self) -> Dict[str, Union[str, int, float]]:
-        pass
+        raise NotImplementedError("method not implemented in his child class")
 
 
 class StreamProcessor():
-    pass
+
+    def process_all(self, processor: DataStream, data: List[Any]) -> str:
+        return processor.process_batch(data)
 
 
 class SensorStream(DataStream):
-    pass
+
+    def __init__(self, stream_id) -> None:
+        super.__init__(stream_id)
+
+    def process_batch(self, data_batch: List[Any]) -> str:
+        pass
 
 
 class TransactionStream(DataStream):
-    pass
+
+    def __init__(self, stream_id) -> None:
+        super.__init__(stream_id)
+
+    def process_batch(self, data_batch: List[Any]) -> str:
+        pass
 
 
 class EventStream(DataStream):
-    pass
+
+    def __init__(self, stream_id) -> None:
+        super.__init__(stream_id)
+
+    def process_batch(self, data_batch: List[Any]) -> str:
+        pass
 
 
 def main() -> None:
     print("=== Polymorphic Stream Processing ===")
-    pass
+
+    stream_process = StreamProcessor()
+
+    sensor_stream = SensorStream("SENSOR_001")
+    transaction_stream = TransactionStream("TRANS_001")
+    event_stream = EventStream("EVENT_001")
+
+    sensor_001 = [x for x in sensor_batch["SENSOR_001"].values()]
+    trans_001 = [x for x in sensor_batch["TRANS_001"].values()]
+    event_001 = [x for x in sensor_batch["EVENT_001"].values()]
+    list_sensor_batch = [sensor_001, trans_001, event_001]
+    list_stream = [sensor_stream, transaction_stream, event_stream]
+
+    for i in range(len(list_sensor_batch)):
+        stream_process.process_all(list_stream[i], list_sensor_batch[i])
 
 
 if __name__ == "__main__":
