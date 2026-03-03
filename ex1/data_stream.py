@@ -16,7 +16,7 @@ sensor_batch = {
 
 class DataStream(ABC):
 
-    def __init__(self, stream_id) -> None:
+    def __init__(self, stream_id: str) -> None:
         self.stream_id = stream_id
 
     @abstractmethod
@@ -39,17 +39,20 @@ class StreamProcessor():
 
 class SensorStream(DataStream):
 
-    def __init__(self, stream_id) -> None:
-        super.__init__(stream_id)
+    def __init__(self, stream_id: str) -> None:
+        super().__init__(stream_id)
 
     def process_batch(self, data_batch: List[Any]) -> str:
-        pass
+        print("Initializing Sensor Stream...")
+        type = data_batch[0]
+        print(f"Stream ID:{self.stream_id}, Type: {type}")
+        return data_batch[0]
 
 
 class TransactionStream(DataStream):
 
-    def __init__(self, stream_id) -> None:
-        super.__init__(stream_id)
+    def __init__(self, stream_id: str) -> None:
+        super().__init__(stream_id)
 
     def process_batch(self, data_batch: List[Any]) -> str:
         pass
@@ -57,15 +60,15 @@ class TransactionStream(DataStream):
 
 class EventStream(DataStream):
 
-    def __init__(self, stream_id) -> None:
-        super.__init__(stream_id)
+    def __init__(self, stream_id: str) -> None:
+        super().__init__(stream_id)
 
     def process_batch(self, data_batch: List[Any]) -> str:
         pass
 
 
 def main() -> None:
-    print("=== Polymorphic Stream Processing ===")
+    print("=== Polymorphic Stream Processing ===\n")
 
     stream_process = StreamProcessor()
 
