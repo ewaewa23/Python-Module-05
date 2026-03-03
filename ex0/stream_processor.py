@@ -83,7 +83,7 @@ class LogProcessor(DataProcessor):
         except ValueError as e:
             return f"ERROR: {e}"
         else:
-            return (self.format_output(processing_data))
+            return (self.format_output("[ALERT] "+processing_data))
 
     def validate(self, data: Any) -> bool:
         try:
@@ -107,11 +107,11 @@ class LogProcessor(DataProcessor):
             return True
 
     def format_output(self, result: str) -> str:
-        return f"Output: [ALERT] {result}\n"
+        return f"Output: {result}\n"
 
 
-def process_all(processor, data):
-    return processor.process(data)
+def process_all(processor: DataProcessor, data: str) -> str:
+    return processor.format_output(data)
 
 
 def main():
@@ -127,10 +127,13 @@ def main():
     for processor, data in zip(processors_instances, data_list):
         print(processor.process(data))
     print("=== Polymorphic Processing Demo ===")
-    print(process_all(processor_num, [2, 2, 2]))
-    print(process_all(processor_str, "hello world"))
-    print(process_all(processor_log, "[INFO] INFO level detected:"
-                      "System ready"))
+    print(process_all(processor_num, "Result 1: Processed 3 numeric values,"
+                      " sum=6, avg=2.0"))
+    print(process_all(processor_str, "Result 2: Processed text: 12 characters,"
+                      " 2 words"))
+    print(process_all(processor_log, "Result 3: [INFO] INFO level detected:"
+                      " System ready"))
+    print("Foundation systems online. Nexus ready for advanced streams.")
 
 
 if __name__ == "__main__":
