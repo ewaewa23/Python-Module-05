@@ -12,9 +12,12 @@ sensor_batch = {
         "Type": "System Events",
         "sensor_batch": ["login", "error", "logout"]}
 }
-
+# trans: "buy:60,sell:"
 
 class DataStream(ABC):
+
+    # def __init__(self, stream_id) -> None:
+    #     self.stream_id = stream_id
 
     @abstractmethod
     def process_batch(self, data_batch: List[Any]) -> str:
@@ -28,7 +31,19 @@ class DataStream(ABC):
         pass
 
 
-class StreamProcessor(DataStream):
+class StreamProcessor():
+    pass
+
+
+class SensorStream(DataStream):
+    pass
+
+
+class TransactionStream(DataStream):
+    pass
+
+
+class EventStream(DataStream):
     pass
 
 
