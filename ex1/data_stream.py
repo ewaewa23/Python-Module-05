@@ -18,6 +18,7 @@ class DataStream(ABC):
 
     def __init__(self, stream_id: str) -> None:
         self.stream_id = stream_id
+        self.type = ""
 
     @abstractmethod
     def process_batch(self, data_batch: List[Any]) -> str:
@@ -25,10 +26,10 @@ class DataStream(ABC):
 
     def filter_data(self, data_batch: List[Any],
                     criteria: Optional[str] = None) -> List[Any]:
-        raise NotImplementedError("method not implemented in his child class")
+        return data_batch
 
     def get_stats(self) -> Dict[str, Union[str, int, float]]:
-        raise NotImplementedError("method not implemented in his child class")
+        return {self.stream_id: self.type}
 
 
 class StreamProcessor():
@@ -41,17 +42,25 @@ class SensorStream(DataStream):
 
     def __init__(self, stream_id: str) -> None:
         super().__init__(stream_id)
+        self.temp = 0
+        self.humidity = 0
+        self.temp = 0
+        self.avg_temp = 0
 
     def process_batch(self, data_batch: List[Any]) -> str:
         print("Initializing Sensor Stream...")
         try:
-            type = str(data_batch[0])
+            self.type = str(data_batch[0])
             list_sensor = list(data_batch[1])
-            data_process = [type, list_sensor]
+            data_process = [self.type, list_sensor]
+            if self.filter_data(data_process)[0] is None:
+                raise Exception("Value have to be numeric or float")
         except ValueError:
             return "Error: data have to be list and string"
+        except Exception as e:
+            return f"{e}"
         else:
-            self.filter_data(data_process)
+            self.get_stats()
         # filter_data
         # avg_temp = min(list_sensor).split(':')
         # print(f"Stream ID: {self.stream_id}, Type: {type}")
@@ -62,9 +71,13 @@ class SensorStream(DataStream):
 
     def filter_data(self, data_batch: List[Any],
                     criteria: Optional[str] = None) -> List[Any]:
-        list_sensor = [value.split(':') for value in data_batch[1]]
-        print(list_sensor)
-        return list_sensor
+        try:
+            self.avg_temp = float(data_batch[1][0].split(":")[1])
+        except ValueError:
+            print("ERROR: value of sensor have to be numeric")
+        else:
+            print()
+        return data_batch
 
 
 class TransactionStream(DataStream):
