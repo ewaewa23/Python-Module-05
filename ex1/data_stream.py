@@ -4,7 +4,7 @@ from typing import Any, List, Optional, Dict, Union
 sensor_batch = {
     "SENSOR_001": {
         "Type": "Environnemental Data",
-        "sensor_batch": {"temp": 22.5, "humidity": 65, "pressure": 1013}},
+        "sensor_batch": ["temp:22.5", "humidity:65", "pressure:1013"]},
     "TRANS_001": {
         "Type": "Financial Data",
         "sensor_batch": ["buy:100", "sell:150", "75"]},
@@ -44,9 +44,27 @@ class SensorStream(DataStream):
 
     def process_batch(self, data_batch: List[Any]) -> str:
         print("Initializing Sensor Stream...")
-        type = data_batch[0]
-        print(f"Stream ID:{self.stream_id}, Type: {type}")
+        try:
+            type = str(data_batch[0])
+            list_sensor = list(data_batch[1])
+            data_process = [type, list_sensor]
+        except ValueError:
+            return "Error: data have to be list and string"
+        else:
+            self.filter_data(data_process)
+        # filter_data
+        # avg_temp = min(list_sensor).split(':')
+        # print(f"Stream ID: {self.stream_id}, Type: {type}")
+        # print(f"Processing sensor batch: {list_sensor}")
+        # print(f"Sensor analysis: {len(list_sensor)} operations,"
+        #       f" avg temp: {avg_temp[1]}°C")
         return data_batch[0]
+
+    def filter_data(self, data_batch: List[Any],
+                    criteria: Optional[str] = None) -> List[Any]:
+        list_sensor = [value.split(':') for value in data_batch[1]]
+        print(list_sensor)
+        return list_sensor
 
 
 class TransactionStream(DataStream):
