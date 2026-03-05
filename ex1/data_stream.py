@@ -46,7 +46,7 @@ class StreamProcessor():
                                  processor.__class__.__name__,
                                  processor.stream_id+"_response": resp})
 
-    def get_info_processed(self):
+    def get_info_processed(self) -> None:
         number_sensor = len([value for value in self.data_stream.values()
                              if value == "SensorStream"])
         number_event = len([value for value in self.data_stream.values()
@@ -163,7 +163,7 @@ class TransactionStream(DataStream):
     def get_stats(self) -> Dict[str, str | int | float]:
         print(f"Stream ID: {self.stream_id}, Type: {self.type}")
         print(f"Processing transaction batch: {self.transaction}")
-        print(f"Sensor analysis: {self.count_operations} operations,"
+        print(f"Transaction analysis: {self.count_operations} operations,"
               f" net flow: {self.net_flow}°C\n")
         return {'type': self.type, 'net_flow': self.net_flow,
                 'count_operations': self.count_operations}
